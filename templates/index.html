@@ -1,28 +1,702 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <title>Meeting Summarizer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Summarizer</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Theme Variables */
+        :root {
+            /* Light Theme (Default) - Professional, elegant colors */
+            --bg-primary: #f8f9fa;
+            --bg-card: #ffffff;
+            --bg-input: #f8f9fa;
+            --bg-scrollable: #f8f9fa;
+            --color-text: #2c3e50;
+            --color-text-secondary: #6c757d;
+            --color-border: #e0e0e0;
+            --color-primary: #3498db;
+            --color-secondary: #2980b9;
+            --color-accent: #1abc9c;
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.08);
+            --shadow-button: 0 4px 8px rgba(52, 152, 219, 0.2);
+            --gradient-primary: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            --gradient-button: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            --gradient-button-hover: linear-gradient(135deg, #2980b9 0%, #1a5276 100%);
+            --gradient-header: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            --gradient-progress: linear-gradient(90deg, #3498db, #1abc9c);
+        }
+
+        /* Dark Theme - Professional, elegant dark colors */
+        [data-theme="dark"] {
+            --bg-primary: #1e272e;
+            --bg-card: #2d3436;
+            --bg-input: #2d3436;
+            --bg-scrollable: #2d3436;
+            --color-text: #ecf0f1;
+            --color-text-secondary: #bdc3c7;
+            --color-border: #3d4852;
+            --color-primary: #3498db;
+            --color-secondary: #2980b9;
+            --color-accent: #1abc9c;
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.2);
+            --shadow-button: 0 4px 8px rgba(52, 152, 219, 0.3);
+            --gradient-primary: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            --gradient-button: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            --gradient-button-hover: linear-gradient(135deg, #2980b9 0%, #1a5276 100%);
+            --gradient-header: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            --gradient-progress: linear-gradient(90deg, #3498db, #1abc9c);
+        }
+
+        /* Base Styles */
+        body {
+            background: var(--bg-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            color: var(--color-text);
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            position: relative;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        .theme-toggle-button {
+            background: var(--gradient-button);
+            border: none;
+            border-radius: 50px;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-button);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .theme-toggle-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .theme-toggle-button i {
+            transition: all 0.3s ease;
+        }
+
+        /* Header Styles */
+        .app-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .app-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .app-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .app-subtitle {
+            color: var(--color-text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            background-color: var(--bg-card);
+            margin-bottom: 25px;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            background: var(--gradient-header);
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 15px 20px;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header i {
+            margin-right: 8px;
+            font-size: 1em;
+        }
+
+        .card-body {
+            padding: 25px;
+            background-color: var(--bg-card);
+            color: var(--color-text);
+        }
+
+        /* Form Styles */
+        .form-label {
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+            background-color: var(--bg-input);
+            color: var(--color-text);
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--color-primary);
+        }
+
+        .btn-primary {
+            background: var(--gradient-button);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-button);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--gradient-button-hover);
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* File Upload Styles */
+        .file-upload-wrapper {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            border: 2px dashed var(--color-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: var(--bg-input);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .file-upload-wrapper:hover {
+            border-color: var(--color-primary);
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .file-upload-content {
+            text-align: center;
+            color: var(--color-text-secondary);
+            z-index: 1;
+            padding: 0 15px;
+        }
+
+        .file-upload-icon {
+            font-size: 2rem;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+
+        .file-name {
+            margin-top: 8px;
+            font-weight: 600;
+            color: var(--color-text);
+            word-break: break-all;
+            max-width: 100%;
+        }
+
+        /* Result Section Styles */
+        .result-section {
+            padding: 0;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--color-text);
+            font-size: 1rem;
+        }
+
+        .result-header i {
+            margin-right: 8px;
+            color: var(--color-primary);
+        }
+
+        .scrollable-section {
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 15px;
+            background: var(--bg-scrollable);
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            color: var(--color-text);
+        }
+
+        .scrollable-section:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.1);
+        }
+
+        .scrollable-section::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollable-section::-webkit-scrollbar-track {
+            background: var(--bg-scrollable);
+            border-radius: 8px;
+        }
+
+        .scrollable-section::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: 8px;
+        }
+
+        .scrollable-section::-webkit-scrollbar-thumb:hover {
+            background: var(--color-text-secondary);
+        }
+
+        .no-summary {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .no-summary i {
+            font-size: 2.5rem;
+            color: var(--color-border);
+            margin-bottom: 15px;
+        }
+
+        .no-summary p {
+            color: var(--color-text-secondary);
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        /* Loader Styles */
+        #loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #loader-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loader-wrapper {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            max-width: 350px;
+            width: 90%;
+        }
+
+        .loader-title {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .loader-message {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--gradient-progress);
+            border-radius: 8px;
+            transition: width 0.5s ease;
+        }
+
+        .loader-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 20px auto;
+            }
+
+            .app-title {
+                font-size: 2rem;
+            }
+
+            .app-subtitle {
+                font-size: 0.95rem;
+            }
+
+            .card-header {
+                padding: 12px 15px;
+                font-size: 1rem;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+
+            .theme-toggle {
+                top: 10px;
+                right: 15px;
+            }
+
+            .theme-toggle-button {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Animation for cards */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        /* Theme transition */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+    </style>
 </head>
-<body class="container py-5">
-    <h1 class="mb-4">Meeting Summarizer using Gemini 1.5 Pro</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="audio_file" class="form-control mb-3" required>
-        <button type="submit" class="btn btn-primary">Upload & Summarize</button>
-    </form>
 
-    {% if transcript %}
-    <div class="mt-5">
-        <h4>Transcript</h4>
-        <p>{{ transcript }}</p>
-    </div>
-    {% endif %}
+<body>
+    <div class="container">
+        <!-- Theme Toggle Button -->
+        <div class="theme-toggle">
+            <button id="theme-toggle-btn" class="theme-toggle-button" aria-label="Toggle dark/light mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
 
-    {% if summary %}
-    <div class="mt-5">
-        <h4>Summary</h4>
-        <p>{{ summary }}</p>
+        <div class="app-header">
+            <h1 class="app-title">Video Summarizer</h1>
+            <p class="app-subtitle">Upload your video and get an AI-generated summary and transcript</p>
+        </div>
+
+        <!-- Single Column Layout -->
+        <!-- Upload Section -->
+        <div class="card fade-in">
+            <div class="card-header">
+                <i class="fas fa-cloud-upload-alt"></i> Upload Your Video
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data" onsubmit="showLoader(event)">
+                    <div class="mb-4">
+                        <label for="audio_file" class="form-label">Choose a video file:</label>
+                        <div class="file-upload-wrapper" id="file-upload-wrapper">
+                            <input type="file" name="audio_file" id="audio_file" class="form-control" accept="video/*" onchange="updateFileName()">
+                            <div class="file-upload-content">
+                                <div class="file-upload-icon">
+                                    <i class="fas fa-file-video"></i>
+                                </div>
+                                <div class="file-upload-text">Drag & drop your video here or click to browse</div>
+                                <div class="file-name" id="file-name"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-magic me-2"></i> Generate Summary
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="card fade-in">
+            <div class="card-header">
+                <i class="fas fa-file-alt"></i> Summary and Transcript
+            </div>
+            <div class="card-body">
+                {% if summary %}
+                <div class="result-section">
+                    <div class="result-header">
+                        <i class="fas fa-lightbulb"></i> Summary
+                    </div>
+                    <div class="scrollable-section">
+                        <p>{{ summary }}</p>
+                    </div>
+                    
+                    <div class="result-header">
+                        <i class="fas fa-align-left"></i> Transcript
+                    </div>
+                    <div class="scrollable-section">
+                        <p>{{ transcript }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="no-summary">
+                    <i class="fas fa-file-video"></i>
+                    <p>No summary available yet. Upload a video to get started!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    {% endif %}
+
+    <!-- Loader Overlay -->
+    <div id="loader-overlay">
+        <div class="loader-wrapper">
+            <div class="loader-title">Processing Your Video</div>
+            <div class="loader-spinner"></div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="loader-message" id="loader-message">Analyzing video content...</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Theme Toggle Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const themeIcon = themeToggleBtn.querySelector('i');
+            
+            // Check for saved theme preference or use preferred color scheme
+            const savedTheme = localStorage.getItem('theme') || 
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Apply saved theme on page load
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+            
+            // Toggle theme when button is clicked
+            themeToggleBtn.addEventListener('click', function() {
+                if (document.body.getAttribute('data-theme') === 'dark') {
+                    document.body.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                    themeIcon.classList.replace('fa-sun', 'fa-moon');
+                } else {
+                    document.body.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    themeIcon.classList.replace('fa-moon', 'fa-sun');
+                }
+            });
+        });
+
+        // File upload handling
+        function updateFileName() {
+            const fileInput = document.getElementById('audio_file');
+            const fileName = document.getElementById('file-name');
+            const wrapper = document.getElementById('file-upload-wrapper');
+            
+            if (fileInput.files.length > 0) {
+                fileName.textContent = fileInput.files[0].name;
+                wrapper.style.borderColor = 'var(--color-primary)';
+                wrapper.style.backgroundColor = 'rgba(52, 152, 219, 0.05)';
+            } else {
+                fileName.textContent = '';
+                wrapper.style.borderColor = 'var(--color-border)';
+                wrapper.style.backgroundColor = 'var(--bg-input)';
+            }
+        }
+
+        // Loader animation
+        function showLoader(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('audio_file');
+            if (!fileInput.files.length) {
+                alert('Please select a video file first.');
+                return;
+            }
+            
+            const loaderOverlay = document.getElementById('loader-overlay');
+            const progressBar = document.getElementById('progress-bar');
+            const loaderMessage = document.getElementById('loader-message');
+            const messages = [
+                "Analyzing video content...",
+                "Extracting audio...",
+                "Transcribing content...",
+                "Generating summary...",
+                "Almost done..."
+            ];
+            
+            // Show loader
+            loaderOverlay.classList.add('active');
+            
+            // Simulate progress
+            let progress = 0;
+            let messageIndex = 0;
+            
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 2;
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+                    
+                    // Submit the form after animation completes
+                    setTimeout(() => {
+                        document.querySelector('form').submit();
+                    }, 500);
+                }
+                
+                // Update progress bar
+                progressBar.style.width = `${progress}%`;
+                
+                // Update messages at certain progress points
+                if (progress > messageIndex * 20 && messageIndex < messages.length) {
+                    loaderMessage.textContent = messages[messageIndex];
+                    messageIndex++;
+                    
+                    // Add animation to message change
+                    loaderMessage.style.opacity = 0;
+                    setTimeout(() => {
+                        loaderMessage.style.opacity = 1;
+                    }, 200);
+                }
+            }, 200);
+        }
+
+        // Add hover effect to file upload area
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileUploadWrapper = document.getElementById('file-upload-wrapper');
+            
+            fileUploadWrapper.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = 'var(--color-primary)';
+                this.style.backgroundColor = 'rgba(52, 152, 219, 0.05)';
+            });
+            
+            fileUploadWrapper.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                if (!document.getElementById('audio_file').files.length) {
+                    this.style.borderColor = 'var(--color-border)';
+                    this.style.backgroundColor = 'var(--bg-input)';
+                }
+            });
+            
+            fileUploadWrapper.addEventListener('drop', function(e)  {
+                e.preventDefault();
+                updateFileName();
+            });
+        });
+    </script>
 </body>
+
 </html>
